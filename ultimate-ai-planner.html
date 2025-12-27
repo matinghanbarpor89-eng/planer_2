@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Planner Pro</title>
+    <style>
+        :root {
+            --bg: #f4f6fb;
+            --card: #ffffff;
+            --text: #1f2937;
+            --main: #6366f1;
+            --done: #9ca3af;
+            --border: #e2e8f0;
+        }
+
+        body.dark {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #e5e7eb;
+            --border: #334155;
+        }
+
+        * { box-sizing: border-box; font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; transition: background 0.3s; }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .planner {
+            width: 100%;
+            max-width: 450px;
+            background: var(--card);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,.1);
+            height: fit-content;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        header h1 { margin: 0; font-size: 24px; color: var(--main); }
+
+        .theme-toggle {
+            background: var(--border);
+            border: none;
+            padding: 8px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .input-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .input-box input, .input-box select {
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--text);
+            outline: none;
+        }
+
+        .input-box input:focus { border-color: var(--main); }
+
+        #task { grid-column: span 2; }
+
+        .add-btn {
+            grid-column: span 2;
+            background: var(--main);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .add-btn:hover { opacity: 0.9; }
+
+        .stats {
+            padding: 10px 0;
+            border-top: 1px solid var(--border);
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--done);
+        }
+
+        ul { list-style: none; padding: 0; margin: 0; }
+
+        li {
+            background: rgba(99, 102, 241, 0.05);
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-left: 4px solid var(--main);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        li.done {
+            opacity: 0.6;
+            border-left-color: var(--done);
+        }
+
+        li.done span { text-decoration: line-through; color: var(--done); }
+
+        li span { flex: 1; font-size: 15px; }
+
+        li small { display: block; font-size: 12px; color: var(--done); margin-top: 2px; }
+
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 5px;
+        }
+
+        .check-btn { color: #10b981; }
+        .del-btn { color: #ef4444; }
+    </style>
+</head>
+<body>
+
+<div class="planner">
+    <header>
+        <h1>Planner</h1>
+        <button class="theme-toggle" onclick="toggleDark()" id="themeBtn">🌙</button>
+    </header>
+
+<div class="input-box">
+        <input type="text" id="task" placeholder="What needs to be done?" autocomplete="off">
+        <input type="time" id="time">
+        <select id="day">
+            <option value="Today">Today</option>
+            <option value="Tomorrow">Tomorrow</option>
+            <option value="This Week">This Week</option>
+        </select>
+        <button class="add-btn" onclick="addTask()">Add Task</button>
+    </div>
+
+    <div class="stats" id="stats">Done: 0 / Total: 0</div>
+    <ul id="list"></ul>
+</div>
+
+<script>
+    const taskInput = document.getElementById("task");
+    const timeInput = document.getElementById("time");
+    const dayInput = document.getElementById("day");
+    const list = document.getElementById("list");
+    const stats = document.getElementById("stats");
+
+    // Load tasks on startup
+    let tasks = JSON.parse(localStorage.getItem("planner_tasks")) || [];
+
+    function renderTasks() {
+        list.innerHTML = "";
+        tasks.forEach((task, index) => {
+            const li = document.createElement("li");
+            if (task.done) li.classList.add("done");
+
+            li.innerHTML = 
+                <button class="action-btn check-btn" onclick="toggleDone(${index})">✔</button>
+                <span>
+                    ${task.text}
+                    <small>📅 ${task.day} ${task.time ? " • ⏰ " + task.time : ""}</small>
+                </span>
+                <button class="action-btn del-btn" onclick="deleteTask(${index})">🗑</button>
+            ;
+            list.appendChild(li);
+        });
+        updateStats();
+        localStorage.setItem("planner_tasks", JSON.stringify(tasks));
+    }
+
+    function addTask() {
+        const text = taskInput.value.trim();
+        if (!text) return;
+
+        const newTask = {
+            text: text,
+            time: timeInput.value,
+            day: dayInput.value,
+            done: false
+        };
+
+        tasks.push(newTask);
+        taskInput.value = "";
+        timeInput.value = "";
+        renderTasks();
+    }
+
+    function toggleDone(index) {
+        tasks[index].done = !tasks[index].done;
+        renderTasks();
+    }
+
+    function deleteTask(index) {
+        tasks.splice(index, 1);
+        renderTasks();
+    }
+
+    function updateStats() {
+        const total = tasks.length;
+        const done = tasks.filter(t => t.done).length;
+        stats.innerText = total === 0 ? "No tasks yet!" : Done: ${done} / Total: ${total};
+    }
+
+    // Support for "Enter" key
+    taskInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") addTask();
+    });
+
+    // Dark Mode Logic
+    function toggleDark() {
+        const isDark = document.body.classList.toggle("dark");
+        localStorage.setItem("planner_theme", isDark ? "dark" : "light");
+        document.getElementById("themeBtn").innerText = isDark ? "☀️" : "🌙";
+    }
+
+    // Check Theme preference
+    if (localStorage.getItem("planner_theme") === "dark") {
+        document.body.classList.add("dark");
+        document.getElementById("themeBtn").innerText = "☀️";
+    }
+
+    // Initial Render
+    renderTasks();
+</script>
+
+</body>
+</html>
