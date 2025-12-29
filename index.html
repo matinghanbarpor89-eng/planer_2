@@ -2,7 +2,7 @@
 <html lang="fa">
 <head>
 <meta charset="UTF-8">
-<title>MyKala PRO++ - پرداخت آنلاین</title>
+<title>MyKala PRO++ - سفارشات</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:Tahoma,sans-serif;}
@@ -15,14 +15,13 @@ header span{cursor:pointer;margin:0 5px;}
 .slider{position:relative;width:100%;overflow:hidden;border-radius:12px;margin:15px 0;}
 .slider img{width:100%;height:300px;object-fit:cover;transition:0.5s;}
 .container{padding:15px;}
-.filter-panel{background:#fff;padding:15px;border-radius:12px;box-shadow:0 6px 15px rgba(0,0,0,0.1);margin-bottom:15px;display:flex;flex-wrap:wrap;gap:10px;}
 .products{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px;}
 .card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 6px 15px rgba(0,0,0,0.1);transition:0.3s;display:flex;flex-direction:column;}
 .card:hover{transform:translateY(-5px);box-shadow:0 12px 20px rgba(0,0,0,0.15);}
 .card img{height:160px;object-fit:contain;background:#f9f9f9;}
 .card h4{font-size:14px;margin:10px 0;flex:1;padding:0 5px;}
 .price{color:#ef394e;font-weight:bold;padding:0 5px;}
-button{background:#ef394e;border:none;color:#fff;padding:8px;border-radius:6px;cursor:pointer;margin:5px;transition:0.3s;}
+button{background:#ef394e;border:none;color:#fff;padding:8px;border-radius:6px;cursor:pointer;margin:10px 5px 10px 5px;transition:0.3s;}
 button:hover{background:#d32f2f;}
 .page{display:none;}
 .page.active{display:block;}
@@ -30,7 +29,7 @@ button:hover{background:#d32f2f;}
 footer{background:#333;color:#fff;text-align:center;padding:12px;margin-top:20px;}
 input, select, textarea{margin:5px 0;padding:8px;border-radius:6px;border:1px solid #ccc;width:100%;}
 textarea{resize:none;}
-.admin-panel,.user-panel,.order-panel{background:#fff;padding:20px;border-radius:12px;box-shadow:0 6px 15px rgba(0,0,0,0.1);max-width:700px;margin:20px auto;}
+.admin-panel,.user-panel,.order-panel{background:#fff;padding:20px;border-radius:12px;box-shadow:0 6px 15px rgba(0,0,0,0.1);max-width:600px;margin:20px auto;}
 .admin-panel h3,.user-panel h3,.order-panel h3{margin-bottom:15px;color:#ef394e;}
 .admin-panel h4,.user-panel h4,.order-panel h4{margin:12px 0 8px 0;color:#333;}
 .order-summary{background:#f9f9f9;padding:10px;border-radius:8px;margin-bottom:10px;}
@@ -50,27 +49,6 @@ textarea{resize:none;}
 </div>
 
 <div class="container">
-
-<div class="filter-panel">
-  <select id="categoryFilter">
-    <option value="">همه دسته‌ها</option>
-    <option value="موبایل">موبایل</option>
-    <option value="لپ‌تاپ">لپ‌تاپ</option>
-    <option value="هدفون">هدفون</option>
-    <option value="ساعت">ساعت</option>
-    <option value="تلویزیون">تلویزیون</option>
-  </select>
-  <input type="number" id="minPrice" placeholder="حداقل قیمت">
-  <input type="number" id="maxPrice" placeholder="حداکثر قیمت">
-  <select id="sortOrder">
-    <option value="">مرتب‌سازی</option>
-    <option value="priceAsc">قیمت کم→زیاد</option>
-    <option value="priceDesc">قیمت زیاد→کم</option>
-    <option value="nameAsc">نام الف→ی</option>
-    <option value="nameDesc">نام ی→الف</option>
-  </select>
-  <button onclick="applyFilter()">اعمال فیلتر</button>
-</div>
 
 <!-- HOME -->
 <div id="home" class="page active">
@@ -120,7 +98,6 @@ textarea{resize:none;}
     <input id="adminName" placeholder="نام محصول">
     <input id="adminPrice" placeholder="قیمت">
     <input id="adminImg" placeholder="لینک عکس">
-    <input id="adminCategory" placeholder="دسته بندی">
     <button onclick="addProduct()">افزودن محصول</button>
     <h4>محصولات موجود</h4>
     <div id="adminProducts"></div>
@@ -133,12 +110,7 @@ textarea{resize:none;}
 
 <footer>© 2025 MyKala PRO++</footer>
 
-<!-- jsPDF CDN -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
 <script>
-const { jsPDF } = window.jspdf;
-
 /* SLIDER */
 const slides=["https://picsum.photos/1200/300?1","https://picsum.photos/1200/300?2","https://picsum.photos/1200/300?3"];
 let si=0;
@@ -156,11 +128,11 @@ const adminPassword="1234";
 
 /* PRODUCTS */
 let products=[
- {id:1,name:"گوشی سامسونگ A54",price:12000000,img:"https://picsum.photos/200?1",category:"موبایل"},
- {id:2,name:"لپ‌تاپ لنوو",price:35000000,img:"https://picsum.photos/200?2",category:"لپ‌تاپ"},
- {id:3,name:"هدفون بلوتوث",price:1500000,img:"https://picsum.photos/200?3",category:"هدفون"},
- {id:4,name:"تلویزیون 55 اینچ",price:28000000,img:"https://picsum.photos/200?4",category:"تلویزیون"},
- {id:5,name:"ساعت هوشمند",price:4200000,img:"https://picsum.photos/200?5",category:"ساعت"}
+ {id:1,name:"گوشی سامسونگ A54",price:12000000,img:"https://picsum.photos/200?1"},
+ {id:2,name:"لپ‌تاپ لنوو",price:35000000,img:"https://picsum.photos/200?2"},
+ {id:3,name:"هدفون بلوتوث",price:1500000,img:"https://picsum.photos/200?3"},
+ {id:4,name:"تلویزیون 55 اینچ",price:28000000,img:"https://picsum.photos/200?4"},
+ {id:5,name:"ساعت هوشمند",price:4200000,img:"https://picsum.photos/200?5"}
 ];
 
 /* ORDERS */
@@ -187,36 +159,12 @@ function renderProducts(list,container){
 renderProducts(products,productList);
 renderProducts(products,userProductList);
 
-/* FILTER + SEARCH + SORT */
-function applyFilter(){
- let filtered=[...products];
- const category=document.getElementById("categoryFilter").value;
- const min=parseInt(document.getElementById("minPrice").value);
- const max=parseInt(document.getElementById("maxPrice").value);
- const sort=document.getElementById("sortOrder").value;
- const query=search.value.trim();
-
- if(category) filtered=filtered.filter(p=>p.category===category);
- if(!isNaN(min)) filtered=filtered.filter(p=>p.price>=min);
- if(!isNaN(max)) filtered=filtered.filter(p=>p.price<=max);
- if(query) filtered=filtered.filter(p=>p.name.includes(query));
-
- switch(sort){
-   case "priceAsc": filtered.sort((a,b)=>a.price-b.price); break;
-   case "priceDesc": filtered.sort((a,b)=>b.price-a.price); break;
-   case "nameAsc": filtered.sort((a,b)=>a.name.localeCompare(b.name)); break;
-   case "nameDesc": filtered.sort((a,b)=>b.name.localeCompare(a.name)); break;
- }
-
- renderProducts(filtered,productList);
- renderProducts(filtered,userProductList);
-}
-
-search.addEventListener("input",applyFilter);
-document.getElementById("categoryFilter").addEventListener("change",applyFilter);
-document.getElementById("minPrice").addEventListener("input",applyFilter);
-document.getElementById("maxPrice").addEventListener("input",applyFilter);
-document.getElementById("sortOrder").addEventListener("change",applyFilter);
+/* SEARCH */
+search.addEventListener("input",()=>{
+ const v=search.value.trim();
+ renderProducts(products.filter(p=>p.name.includes(v)),productList);
+ renderProducts(products.filter(p=>p.name.includes(v)),userProductList);
+});
 
 /* CART USER */
 function getCartUser(){return JSON.parse(localStorage.getItem("cartUser"))||[];}
@@ -227,7 +175,7 @@ function loadCartUser(){const cart=getCartUser();const div=document.getElementBy
 function updateCartCountUser(){document.getElementById("cartCount").innerText=getCartUser().length;}
 updateCartCountUser();
 
-/* PLACE ORDER + PDF */
+/* PLACE ORDER */
 function placeOrder(){
  const name=document.getElementById("orderName").value.trim();
  const phone=document.getElementById("orderPhone").value.trim();
@@ -235,19 +183,10 @@ function placeOrder(){
  const payment=document.getElementById("orderPayment").value;
  const cart=getCartUser();
  if(!name||!phone||!address||cart.length===0){alert("تمام فیلدها و سبد خرید باید پر شود");return;}
-
- // پرداخت آنلاین شبیه سازی
- if(payment==="online"){
-   if(!confirm("پرداخت آنلاین شبیه‌سازی شد. تایید می‌کنید؟")) return;
- }
-
  const order={id:Date.now(),name,phone,address,payment,items:cart};
  orders.push(order);
  localStorage.setItem("orders",JSON.stringify(orders));
-
- alert("سفارش شما ثبت شد! اکنون می‌توانید فاکتور PDF را دریافت کنید.");
- generatePDF(order);
-
+ alert("سفارش شما با موفقیت ثبت شد!");
  localStorage.removeItem("cartUser");
  updateCartCountUser();
  document.getElementById("orderName").value="";
@@ -255,26 +194,6 @@ function placeOrder(){
  document.getElementById("orderAddress").value="";
  loadCartUser();
  renderAdmin();
-}
-
-/* GENERATE PDF */
-function generatePDF(order){
- const doc = new jsPDF();
- doc.setFontSize(18);
- doc.text("فاکتور خرید MyKala",105,20,null,null,"center");
- doc.setFontSize(12);
- doc.text(`نام مشتری: ${order.name}`,20,40);
- doc.text(`شماره تماس: ${order.phone}`,20,50);
- doc.text(`آدرس: ${order.address}`,20,60);
- doc.text(`روش پرداخت: ${order.payment}`,20,70);
- let y=80;
- order.items.forEach((it,i)=>{
-   doc.text(`${i+1}. ${it.name} - ${it.price.toLocaleString()} تومان`,20,y);
-   y+=10;
- });
- const total=order.items.reduce((a,b)=>a+b.price,0);
- doc.text(`جمع کل: ${total.toLocaleString()} تومان`,20,y+10);
- doc.save(`MyKala_Invoice_${order.id}.pdf`);
 }
 
 /* PAGES */
@@ -286,7 +205,7 @@ function showPage(id){
  if(id==="user") renderProducts(products,userProductList);
 }
 
-/* LOGIN */
+/* LOGIN SHARED */
 function login(){
  const user=document.getElementById("loginUser").value.trim();
  const pass=document.getElementById("loginPass").value.trim();
@@ -311,7 +230,7 @@ function renderAdmin(){
  products.forEach((p,i)=>{
    adminProducts.innerHTML+=`
      <div class="card" style="margin-bottom:5px;">
-       <strong>${p.name}</strong> - ${p.price.toLocaleString()} تومان - دسته: ${p.category}
+       <strong>${p.name}</strong> - ${p.price.toLocaleString()} تومان
        <button onclick="editProduct(${i})">ویرایش</button>
        <button onclick="deleteProduct(${i})">حذف</button>
      </div>`;
@@ -329,17 +248,24 @@ function addProduct(){
  const name=document.getElementById("adminName").value.trim();
  const price=parseInt(document.getElementById("adminPrice").value);
  const img=document.getElementById("adminImg").value.trim();
- const category=document.getElementById("adminCategory").value.trim();
- if(!name||!price||!img||!category){alert("همه فیلدها را پر کنید");return;}
- products.push({id:Date.now(),name,price,img,category});
+ if(!name||!price||!img){alert("همه فیلدها را پر کنید");return;}
+ products.push({id:Date.now(),name,price,img});
  renderProducts(products,productList);
  renderProducts(products,userProductList);
  renderAdmin();
  document.getElementById("adminName").value="";
  document.getElementById("adminPrice").value="";
  document.getElementById("adminImg").value="";
- document.getElementById("adminCategory").value="";
 }
 
 function deleteProduct(i){products.splice(i,1);renderProducts(products,productList);renderProducts(products,userProductList);renderAdmin();}
 function editProduct(i){
+ const p=products[i];
+ const newName=prompt("نام محصول:",p.name);
+ const newPrice=parseInt(prompt("قیمت محصول:",p.price));
+ const newImg=prompt("لینک عکس:",p.img);
+ if(newName&&newPrice&&newImg){products[i]={id:p.id,name:newName,price:newPrice,img:newImg};renderProducts(products,productList);renderProducts(products,userProductList);renderAdmin();}
+}
+</script>
+</body>
+</html>
