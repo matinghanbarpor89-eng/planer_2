@@ -1,254 +1,190 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Planner Pro</title>
-    <style>
-        :root {
-            --bg: #f4f6fb;
-            --card: #ffffff;
-            --text: #1f2937;
-            --main: #6366f1;
-            --done: #9ca3af;
-            --border: #e2e8f0;
-        }
-
-        body.dark {
-            --bg: #0f172a;
-            --card: #1e293b;
-            --text: #e5e7eb;
-            --border: #334155;
-        }
-
-        * { box-sizing: border-box; font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; transition: background 0.3s; }
-
-        body {
-            margin: 0;
-            background: var(--bg);
-            color: var(--text);
-            display: flex;
-            justify-content: center;
-            padding: 20px;
-            min-height: 100vh;
-        }
-
-        .planner {
-            width: 100%;
-            max-width: 450px;
-            background: var(--card);
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 15px 35px rgba(0,0,0,.1);
-            height: fit-content;
-        }
-
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        header h1 { margin: 0; font-size: 24px; color: var(--main); }
-
-        .theme-toggle {
-            background: var(--border);
-            border: none;
-            padding: 8px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 18px;
-        }
-
-        .input-box {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .input-box input, .input-box select {
-            padding: 12px;
-            border-radius: 10px;
-            border: 1px solid var(--border);
-            background: var(--card);
-            color: var(--text);
-            outline: none;
-        }
-
-        .input-box input:focus { border-color: var(--main); }
-
-        #task { grid-column: span 2; }
-
-        .add-btn {
-            grid-column: span 2;
-            background: var(--main);
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 10px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .add-btn:hover { opacity: 0.9; }
-
-        .stats {
-            padding: 10px 0;
-            border-top: 1px solid var(--border);
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--done);
-        }
-
-        ul { list-style: none; padding: 0; margin: 0; }
-
-        li {
-            background: rgba(99, 102, 241, 0.05);
-            padding: 12px;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border-left: 4px solid var(--main);
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-
-        li.done {
-            opacity: 0.6;
-            border-left-color: var(--done);
-        }
-
-        li.done span { text-decoration: line-through; color: var(--done); }
-
-        li span { flex: 1; font-size: 15px; }
-
-        li small { display: block; font-size: 12px; color: var(--done); margin-top: 2px; }
-
-        .action-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 18px;
-            padding: 5px;
-        }
-
-        .check-btn { color: #10b981; }
-        .del-btn { color: #ef4444; }
-    </style>
+<meta charset="UTF-8">
+<title>MyKala PRO++ with Admin</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Tahoma,sans-serif;direction:rtl;background:#f4f6f8;}
+header{background:#ef394e;padding:10px;display:flex;align-items:center;gap:10px;color:#fff;}
+header strong{font-size:22px;cursor:pointer;}
+header input{flex:1;padding:8px;border:none;border-radius:6px;}
+.badge{background:#fff;color:#ef394e;border-radius:50%;padding:2px 6px;font-size:12px;margin-right:4px;}
+.slider img{width:100%;height:230px;object-fit:cover;}
+.container{padding:15px;}
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:15px;}
+.card{background:#fff;border-radius:10px;padding:10px;box-shadow:0 4px 10px rgba(0,0,0,.1);display:flex;flex-direction:column;}
+.card img{height:150px;object-fit:contain;}
+.card h4{font-size:14px;margin:8px 0;flex:1;}
+.price{color:#ef394e;font-weight:bold;}
+button{background:#ef394e;border:none;color:#fff;padding:8px;border-radius:6px;cursor:pointer;margin-top:5px;}
+.page{display:none}
+.page.active{display:block}
+.cart-item{background:#fff;padding:10px;border-radius:8px;margin-bottom:10px;display:flex;justify-content:space-between;}
+footer{background:#333;color:#fff;text-align:center;padding:12px;margin-top:20px;}
+input, select{margin:5px 0;padding:6px;border-radius:4px;border:1px solid #ccc;}
+textarea{border:1px solid #ccc;border-radius:4px;padding:6px;width:100%;resize:none;}
+.admin-panel{background:#fff;padding:15px;border-radius:8px;box-shadow:0 4px 10px rgba(0,0,0,.1);}
+.admin-panel h3{margin-top:0;}
+</style>
 </head>
 <body>
 
-<div class="planner">
-    <header>
-        <h1>Planner</h1>
-        <button class="theme-toggle" onclick="toggleDark()" id="themeBtn">🌙</button>
-    </header>
+<header>
+  <strong onclick="showPage('home')">MyKala</strong>
+  <input id="search" placeholder="جستجو در محصولات...">
+  <span onclick="showPage('cart')">🛒 <span class="badge" id="cartCount">0</span></span>
+  <span onclick="showPage('login')">ورود</span>
+  <span onclick="showPage('admin')">پنل مدیریت</span>
+</header>
 
-<div class="input-box">
-        <input type="text" id="task" placeholder="What needs to be done?" autocomplete="off">
-        <input type="time" id="time">
-        <select id="day">
-            <option value="Today">Today</option>
-            <option value="Tomorrow">Tomorrow</option>
-            <option value="This Week">This Week</option>
-        </select>
-        <button class="add-btn" onclick="addTask()">Add Task</button>
-    </div>
-
-    <div class="stats" id="stats">Done: 0 / Total: 0</div>
-    <ul id="list"></ul>
+<div class="slider">
+  <img id="slide" src="https://picsum.photos/1200/300?1">
 </div>
 
+<div class="container">
+
+<!-- HOME -->
+<div id="home" class="page active">
+  <div class="products" id="productList"></div>
+</div>
+
+<!-- CART -->
+<div id="cart" class="page">
+  <h3>سبد خرید</h3>
+  <div id="cartItems"></div>
+  <h4 id="totalPrice"></h4>
+</div>
+
+<!-- LOGIN -->
+<div id="login" class="page">
+  <h3>ورود / ثبت‌نام</h3>
+  <input placeholder="ایمیل" style="width:100%;padding:8px"><br><br>
+  <input type="password" placeholder="رمز عبور" style="width:100%;padding:8px"><br><br>
+  <button onclick="alert('بخش نمایشی است')">ورود</button>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="admin" class="page">
+  <div class="admin-panel">
+    <h3>پنل مدیریت</h3>
+    
+    <h4>افزودن محصول جدید</h4>
+    <input id="adminName" placeholder="نام محصول">
+    <input id="adminPrice" placeholder="قیمت">
+    <input id="adminImg" placeholder="لینک عکس">
+    <button onclick="addProduct()">افزودن محصول</button>
+    
+    <h4>محصولات موجود</h4>
+    <div id="adminProducts"></div>
+    
+    <h4>سبد خریدها (سفارش‌ها)</h4>
+    <div id="adminCart"></div>
+  </div>
+</div>
+
+</div>
+
+<footer>© 2025 MyKala PRO++</footer>
+
 <script>
-    const taskInput = document.getElementById("task");
-    const timeInput = document.getElementById("time");
-    const dayInput = document.getElementById("day");
-    const list = document.getElementById("list");
-    const stats = document.getElementById("stats");
+/* SLIDER */
+const slides=["https://picsum.photos/1200/300?1","https://picsum.photos/1200/300?2","https://picsum.photos/1200/300?3"];
+let si=0;
+setInterval(()=>{document.getElementById("slide").src=slides[si];si=(si+1)%slides.length;},3500);
 
-    // Load tasks on startup
-    let tasks = JSON.parse(localStorage.getItem("planner_tasks")) || [];
+/* PRODUCTS */
+let products=[
+ {id:1,name:"گوشی سامسونگ A54",price:12000000,img:"https://picsum.photos/200?1"},
+ {id:2,name:"لپ‌تاپ لنوو",price:35000000,img:"https://picsum.photos/200?2"},
+ {id:3,name:"هدفون بلوتوث",price:1500000,img:"https://picsum.photos/200?3"},
+ {id:4,name:"تلویزیون 55 اینچ",price:28000000,img:"https://picsum.photos/200?4"},
+ {id:5,name:"ساعت هوشمند",price:4200000,img:"https://picsum.photos/200?5"}
+];
 
-    function renderTasks() {
-        list.innerHTML = "";
-        tasks.forEach((task, index) => {
-            const li = document.createElement("li");
-            if (task.done) li.classList.add("done");
+const productList=document.getElementById("productList");
+const search=document.getElementById("search");
 
-            li.innerHTML = 
-                <button class="action-btn check-btn" onclick="toggleDone(${index})">✔</button>
-                <span>
-                    ${task.text}
-                    <small>📅 ${task.day} ${task.time ? " • ⏰ " + task.time : ""}</small>
-                </span>
-                <button class="action-btn del-btn" onclick="deleteTask(${index})">🗑</button>
-            ;
-            list.appendChild(li);
-        });
-        updateStats();
-        localStorage.setItem("planner_tasks", JSON.stringify(tasks));
-    }
+function renderProducts(list){
+ productList.innerHTML="";
+ list.forEach(p=>{
+  productList.innerHTML+=`
+   <div class="card">
+    <img src="${p.img}">
+    <h4>${p.name}</h4>
+    <div class="price">${p.price.toLocaleString()} تومان</div>
+    <button onclick="addToCart(${p.id})">افزودن به سبد</button>
+   </div>
+  `;
+ });
+}
+renderProducts(products);
 
-    function addTask() {
-        const text = taskInput.value.trim();
-        if (!text) return;
+/* SEARCH */
+search.addEventListener("input",()=>{
+ const v=search.value.trim();
+ renderProducts(products.filter(p=>p.name.includes(v)));
+});
 
-        const newTask = {
-            text: text,
-            time: timeInput.value,
-            day: dayInput.value,
-            done: false
-        };
+/* CART */
+function getCart(){return JSON.parse(localStorage.getItem("cart"))||[];}
+function saveCart(c){localStorage.setItem("cart",JSON.stringify(c));updateCartCount();}
+function addToCart(id){const cart=getCart();cart.push(products.find(p=>p.id===id));saveCart(cart);alert("به سبد خرید اضافه شد");}
+function removeFromCart(i){const cart=getCart();cart.splice(i,1);saveCart(cart);loadCart();}
+function loadCart(){const cart=getCart();const div=document.getElementById("cartItems");let total=0;div.innerHTML="";cart.forEach((p,i)=>{total+=p.price;div.innerHTML+=`<div class="cart-item"><span>${p.name}</span><span>${p.price.toLocaleString()} <button onclick="removeFromCart(${i})">❌</button></span></div>`;});document.getElementById("totalPrice").innerText="جمع کل: "+total.toLocaleString()+" تومان";}
+function updateCartCount(){document.getElementById("cartCount").innerText=getCart().length;}
+updateCartCount();
 
-        tasks.push(newTask);
-        taskInput.value = "";
-        timeInput.value = "";
-        renderTasks();
-    }
+/* PAGES */
+function showPage(id){
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+ if(id==="cart") loadCart();
+ if(id==="admin") renderAdmin();
+}
 
-    function toggleDone(index) {
-        tasks[index].done = !tasks[index].done;
-        renderTasks();
-    }
+/* ADMIN PANEL */
+function renderAdmin(){
+ const adminProducts=document.getElementById("adminProducts");
+ adminProducts.innerHTML="";
+ products.forEach((p,i)=>{
+   adminProducts.innerHTML+=`
+     <div class="card" style="margin-bottom:5px;">
+       <strong>${p.name}</strong> - ${p.price.toLocaleString()} تومان
+       <button onclick="editProduct(${i})">ویرایش</button>
+       <button onclick="deleteProduct(${i})">حذف</button>
+     </div>`;
+ });
 
-    function deleteTask(index) {
-        tasks.splice(index, 1);
-        renderTasks();
-    }
+ const adminCart=document.getElementById("adminCart");
+ const cart=getCart();
+ adminCart.innerHTML="";
+ cart.forEach((c,i)=>{adminCart.innerHTML+=`<div>${c.name} - ${c.price.toLocaleString()} تومان</div>`;});
+}
 
-    function updateStats() {
-        const total = tasks.length;
-        const done = tasks.filter(t => t.done).length;
-        stats.innerText = total === 0 ? "No tasks yet!" : Done: ${done} / Total: ${total};
-    }
+function addProduct(){
+ const name=document.getElementById("adminName").value.trim();
+ const price=parseInt(document.getElementById("adminPrice").value);
+ const img=document.getElementById("adminImg").value.trim();
+ if(!name||!price||!img){alert("همه فیلدها را پر کنید");return;}
+ products.push({id:Date.now(),name,price,img});
+ renderProducts(products);
+ renderAdmin();
+ document.getElementById("adminName").value="";
+ document.getElementById("adminPrice").value="";
+ document.getElementById("adminImg").value="";
+}
 
-    // Support for "Enter" key
-    taskInput.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") addTask();
-    });
+function deleteProduct(i){products.splice(i,1);renderProducts(products);renderAdmin();}
+function editProduct(i){
+ const p=products[i];
+ const newName=prompt("نام محصول:",p.name);
+ const newPrice=parseInt(prompt("قیمت محصول:",p.price));
+ const newImg=prompt("لینک عکس:",p.img);
+ if(newName&&newPrice&&newImg){products[i]={id:p.id,name:newName,price:newPrice,img:newImg};renderProducts(products);renderAdmin();}
+}
 
-    // Dark Mode Logic
-    function toggleDark() {
-        const isDark = document.body.classList.toggle("dark");
-        localStorage.setItem("planner_theme", isDark ? "dark" : "light");
-        document.getElementById("themeBtn").innerText = isDark ? "☀️" : "🌙";
-    }
-
-    // Check Theme preference
-    if (localStorage.getItem("planner_theme") === "dark") {
-        document.body.classList.add("dark");
-        document.getElementById("themeBtn").innerText = "☀️";
-    }
-
-    // Initial Render
-    renderTasks();
 </script>
-
 </body>
 </html>
