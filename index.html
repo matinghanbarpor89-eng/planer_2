@@ -86,7 +86,7 @@ textarea{resize:none;}
       <option value="online">پرداخت آنلاین</option>
       <option value="cod">پرداخت در محل</option>
     </select>
-    <button onclick="placeOrder()">ثبت سفارش</button>
+    <button onclick="placeOrder()">ثبت سفارش و دریافت فاکتور PDF</button>
   </div>
 </div>
 
@@ -110,7 +110,12 @@ textarea{resize:none;}
 
 <footer>© 2025 MyKala PRO++</footer>
 
+<!-- jsPDF CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <script>
+const { jsPDF } = window.jspdf;
+
 /* SLIDER */
 const slides=["https://picsum.photos/1200/300?1","https://picsum.photos/1200/300?2","https://picsum.photos/1200/300?3"];
 let si=0;
@@ -175,7 +180,7 @@ function loadCartUser(){const cart=getCartUser();const div=document.getElementBy
 function updateCartCountUser(){document.getElementById("cartCount").innerText=getCartUser().length;}
 updateCartCountUser();
 
-/* PLACE ORDER */
+/* PLACE ORDER + PDF */
 function placeOrder(){
  const name=document.getElementById("orderName").value.trim();
  const phone=document.getElementById("orderPhone").value.trim();
@@ -183,10 +188,17 @@ function placeOrder(){
  const payment=document.getElementById("orderPayment").value;
  const cart=getCartUser();
  if(!name||!phone||!address||cart.length===0){alert("تمام فیلدها و سبد خرید باید پر شود");return;}
+
+ // شبیه‌سازی پرداخت آنلاین
+ if(payment==="online"){if(!confirm("پرداخت آنلاین شبیه‌سازی شد. تایید می‌کنید؟")) return;}
+
  const order={id:Date.now(),name,phone,address,payment,items:cart};
  orders.push(order);
  localStorage.setItem("orders",JSON.stringify(orders));
- alert("سفارش شما با موفقیت ثبت شد!");
+ alert("سفارش شما ثبت شد! فاکتور PDF در حال دانلود است.");
+
+ generatePDF(order);
+
  localStorage.removeItem("cartUser");
  updateCartCountUser();
  document.getElementById("orderName").value="";
@@ -194,6 +206,26 @@ function placeOrder(){
  document.getElementById("orderAddress").value="";
  loadCartUser();
  renderAdmin();
+}
+
+/* GENERATE PDF */
+function generatePDF(order){
+ const doc = new jsPDF();
+ doc.setFontSize(18);
+ doc.text("فاکتور خرید MyKala",105,20,null,null,"center");
+ doc.setFontSize(12);
+ doc.text(`نام مشتری: ${order.name}`,20,40);
+ doc.text(`شماره تماس: ${order.phone}`,20,50);
+ doc.text(`آدرس: ${order.address}`,20,60);
+ doc.text(`روش پرداخت: ${order.payment}`,20,70);
+ let y=80;
+ order.items.forEach((it,i)=>{
+   doc.text(`${i+1}. ${it.name} - ${it.price.toLocaleString()} تومان`,20,y);
+   y+=10;
+ });
+ const total=order.items.reduce((a,b)=>a+b.price,0);
+ doc.text(`جمع کل: ${total.toLocaleString()} تومان`,20,y+10);
+ doc.save(`MyKala_Invoice_${order.id}.pdf`);
 }
 
 /* PAGES */
