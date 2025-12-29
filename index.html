@@ -2,7 +2,7 @@
 <html lang="fa">
 <head>
 <meta charset="UTF-8">
-<title>MyKala PRO++ - سفارشات</title>
+<title>MyKala PRO++</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:Tahoma,sans-serif;}
@@ -32,7 +32,11 @@ textarea{resize:none;}
 .admin-panel,.user-panel,.order-panel{background:#fff;padding:20px;border-radius:12px;box-shadow:0 6px 15px rgba(0,0,0,0.1);max-width:600px;margin:20px auto;}
 .admin-panel h3,.user-panel h3,.order-panel h3{margin-bottom:15px;color:#ef394e;}
 .admin-panel h4,.user-panel h4,.order-panel h4{margin:12px 0 8px 0;color:#333;}
-.order-summary{background:#f9f9f9;padding:10px;border-radius:8px;margin-bottom:10px;}
+
+/* CUSTOM ALERT */
+#customAlert{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-50px);background:#333;color:#fff;padding:12px 20px;border-radius:8px;box-shadow:0 5px 15px rgba(0,0,0,0.3);opacity:0;transition:0.5s;z-index:9999;}
+#customAlert.show{opacity:1;transform:translateX(-50%) translateY(0);}
+#customAlert button{background:#ef394e;border:none;color:#fff;padding:5px 10px;margin-left:10px;border-radius:6px;cursor:pointer;}
 </style>
 </head>
 <body>
@@ -86,7 +90,7 @@ textarea{resize:none;}
       <option value="online">پرداخت آنلاین</option>
       <option value="cod">پرداخت در محل</option>
     </select>
-    <button onclick="placeOrder()">ثبت سفارش و دریافت فاکتور PDF</button>
+    <button onclick="placeOrder()">ثبت سفارش</button>
   </div>
 </div>
 
@@ -110,22 +114,28 @@ textarea{resize:none;}
 
 <footer>© 2025 MyKala PRO++</footer>
 
-<!-- jsPDF CDN -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<!-- CUSTOM ALERT -->
+<div id="customAlert"><p id="alertText"></p><button onclick="closeAlert()">تایید</button></div>
 
 <script>
-const { jsPDF } = window.jspdf;
-
 /* SLIDER */
 const slides=["https://picsum.photos/1200/300?1","https://picsum.photos/1200/300?2","https://picsum.photos/1200/300?3"];
 let si=0;
 setInterval(()=>{document.getElementById("slide").src=slides[si];si=(si+1)%slides.length;},3500);
 
+/* CUSTOM ALERT */
+const customAlert=document.getElementById("customAlert");
+let alertTimeout;
+function showAlert(msg){
+  document.getElementById("alertText").innerText=msg;
+  customAlert.classList.add("show");
+  clearTimeout(alertTimeout);
+  alertTimeout=setTimeout(()=>{ closeAlert(); },3000);
+}
+function closeAlert(){ customAlert.classList.remove("show"); clearTimeout(alertTimeout); }
+
 /* USERS */
-const users=[
-  {email:"user1@test.com", password:"1234", name:"کاربر ۱"},
-  {email:"user2@test.com", password:"abcd", name:"کاربر ۲"}
-];
+const users=[{email:"user1@test.com", password:"1234", name:"کاربر ۱"},{email:"user2@test.com", password:"abcd", name:"کاربر ۲"}];
 
 /* ADMIN */
 const adminUserName="admin";
@@ -164,41 +174,27 @@ function renderProducts(list,container){
 renderProducts(products,productList);
 renderProducts(products,userProductList);
 
-/* SEARCH */
-search.addEventListener("input",()=>{
- const v=search.value.trim();
- renderProducts(products.filter(p=>p.name.includes(v)),productList);
- renderProducts(products.filter(p=>p.name.includes(v)),userProductList);
-});
-
 /* CART USER */
 function getCartUser(){return JSON.parse(localStorage.getItem("cartUser"))||[];}
 function saveCartUser(c){localStorage.setItem("cartUser",JSON.stringify(c));updateCartCountUser();}
-function addToCartUser(id){const cart=getCartUser();cart.push(products.find(p=>p.id===id));saveCartUser(cart);alert("به سبد خرید اضافه شد");}
+function addToCartUser(id){const cart=getCartUser();cart.push(products.find(p=>p.id===id));saveCartUser(cart);showAlert("به سبد خرید اضافه شد");}
 function removeFromCartUser(i){const cart=getCartUser();cart.splice(i,1);saveCartUser(cart);loadCartUser();}
 function loadCartUser(){const cart=getCartUser();const div=document.getElementById("cartItemsUser");let total=0;div.innerHTML="";cart.forEach((p,i)=>{total+=p.price;div.innerHTML+=`<div class="cart-item"><span>${p.name}</span><span>${p.price.toLocaleString()} <button onclick="removeFromCartUser(${i})">❌</button></span></div>`;});document.getElementById("totalPriceUser").innerText="جمع کل: "+total.toLocaleString()+" تومان";}
 function updateCartCountUser(){document.getElementById("cartCount").innerText=getCartUser().length;}
 updateCartCountUser();
 
-/* PLACE ORDER + PDF */
+/* PLACE ORDER */
 function placeOrder(){
  const name=document.getElementById("orderName").value.trim();
  const phone=document.getElementById("orderPhone").value.trim();
  const address=document.getElementById("orderAddress").value.trim();
  const payment=document.getElementById("orderPayment").value;
  const cart=getCartUser();
- if(!name||!phone||!address||cart.length===0){alert("تمام فیلدها و سبد خرید باید پر شود");return;}
-
- // شبیه‌سازی پرداخت آنلاین
- if(payment==="online"){if(!confirm("پرداخت آنلاین شبیه‌سازی شد. تایید می‌کنید؟")) return;}
-
+ if(!name||!phone||!address||cart.length===0){showAlert("تمام فیلدها و سبد خرید باید پر شود");return;}
  const order={id:Date.now(),name,phone,address,payment,items:cart};
  orders.push(order);
  localStorage.setItem("orders",JSON.stringify(orders));
- alert("سفارش شما ثبت شد! فاکتور PDF در حال دانلود است.");
-
- generatePDF(order);
-
+ showAlert("سفارش شما با موفقیت ثبت شد!");
  localStorage.removeItem("cartUser");
  updateCartCountUser();
  document.getElementById("orderName").value="";
@@ -206,26 +202,6 @@ function placeOrder(){
  document.getElementById("orderAddress").value="";
  loadCartUser();
  renderAdmin();
-}
-
-/* GENERATE PDF */
-function generatePDF(order){
- const doc = new jsPDF();
- doc.setFontSize(18);
- doc.text("فاکتور خرید MyKala",105,20,null,null,"center");
- doc.setFontSize(12);
- doc.text(`نام مشتری: ${order.name}`,20,40);
- doc.text(`شماره تماس: ${order.phone}`,20,50);
- doc.text(`آدرس: ${order.address}`,20,60);
- doc.text(`روش پرداخت: ${order.payment}`,20,70);
- let y=80;
- order.items.forEach((it,i)=>{
-   doc.text(`${i+1}. ${it.name} - ${it.price.toLocaleString()} تومان`,20,y);
-   y+=10;
- });
- const total=order.items.reduce((a,b)=>a+b.price,0);
- doc.text(`جمع کل: ${total.toLocaleString()} تومان`,20,y+10);
- doc.save(`MyKala_Invoice_${order.id}.pdf`);
 }
 
 /* PAGES */
@@ -242,15 +218,15 @@ function login(){
  const user=document.getElementById("loginUser").value.trim();
  const pass=document.getElementById("loginPass").value.trim();
  if(user===adminUserName && pass===adminPassword){
-   alert("ورود مدیر موفق!");
+   showAlert("ورود مدیر موفق!");
    showPage("admin");
  } else {
    const u=users.find(x=>x.email===user && x.password===pass);
    if(u){
-     alert("ورود کاربر موفق!");
+     showAlert("ورود کاربر موفق!");
      showPage("user");
    } else {
-     alert("نام کاربری یا رمز عبور اشتباه است!");
+     showAlert("نام کاربری یا رمز عبور اشتباه است!");
    }
  }
 }
@@ -280,7 +256,7 @@ function addProduct(){
  const name=document.getElementById("adminName").value.trim();
  const price=parseInt(document.getElementById("adminPrice").value);
  const img=document.getElementById("adminImg").value.trim();
- if(!name||!price||!img){alert("همه فیلدها را پر کنید");return;}
+ if(!name||!price||!img){showAlert("همه فیلدها را پر کنید");return;}
  products.push({id:Date.now(),name,price,img});
  renderProducts(products,productList);
  renderProducts(products,userProductList);
@@ -299,5 +275,6 @@ function editProduct(i){
  if(newName&&newPrice&&newImg){products[i]={id:p.id,name:newName,price:newPrice,img:newImg};renderProducts(products,productList);renderProducts(products,userProductList);renderAdmin();}
 }
 </script>
+
 </body>
 </html>
