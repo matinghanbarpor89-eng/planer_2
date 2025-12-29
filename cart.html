@@ -1,0 +1,11 @@
+<h3>سبد خرید</h3>
+<div id="cartItems"></div>
+
+<script src="js/data.js"></script>
+<script src="js/cart.js"></script>
+<script>
+const div=document.getElementById("cartItems");
+getCart().forEach(p=>{
+ div.innerHTML+=`<p>${p.name} - ${p.price}</p>`;
+});
+</script>
