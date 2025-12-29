@@ -2,31 +2,31 @@
 <html lang="fa">
 <head>
 <meta charset="UTF-8">
-<title>MyKala PRO++ with Admin Login</title>
+<title>MyKala PRO++ Full Version</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Tahoma,sans-serif;direction:rtl;background:#f4f6f8;}
-header{background:#ef394e;padding:10px;display:flex;align-items:center;gap:10px;color:#fff;}
+header{background:#ef394e;padding:10px 8px;display:flex;align-items:center;gap:10px;color:#fff;flex-wrap:wrap;}
 header strong{font-size:22px;cursor:pointer;}
-header input{flex:1;padding:8px;border:none;border-radius:6px;}
+header input{flex:1;min-width:150px;padding:8px;border:none;border-radius:6px;}
 .badge{background:#fff;color:#ef394e;border-radius:50%;padding:2px 6px;font-size:12px;margin-right:4px;}
 .slider img{width:100%;height:230px;object-fit:cover;}
-.container{padding:15px;}
+.container{padding:15px 10px;}
 .products{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:15px;}
 .card{background:#fff;border-radius:10px;padding:10px;box-shadow:0 4px 10px rgba(0,0,0,.1);display:flex;flex-direction:column;}
 .card img{height:150px;object-fit:contain;}
 .card h4{font-size:14px;margin:8px 0;flex:1;}
 .price{color:#ef394e;font-weight:bold;}
-button{background:#ef394e;border:none;color:#fff;padding:8px;border-radius:6px;cursor:pointer;margin-top:5px;}
+button{background:#ef394e;border:none;color:#fff;padding:8px;border-radius:6px;cursor:pointer;margin-top:5px;width:100%;}
 .page{display:none}
 .page.active{display:block}
-.cart-item{background:#fff;padding:10px;border-radius:8px;margin-bottom:10px;display:flex;justify-content:space-between;}
+.cart-item{background:#fff;padding:10px;border-radius:8px;margin-bottom:10px;display:flex;justify-content:space-between;flex-wrap:wrap;}
 footer{background:#333;color:#fff;text-align:center;padding:12px;margin-top:20px;}
-input, select{margin:5px 0;padding:6px;border-radius:4px;border:1px solid #ccc;}
+input, select{margin:5px 0;padding:6px;border-radius:4px;border:1px solid #ccc;width:100%;}
 textarea{border:1px solid #ccc;border-radius:4px;padding:6px;width:100%;resize:none;}
-.admin-panel{background:#fff;padding:15px;border-radius:8px;box-shadow:0 4px 10px rgba(0,0,0,.1);}
-.admin-panel h3{margin-top:0;}
+.admin-panel,.user-panel{background:#fff;padding:15px;border-radius:8px;box-shadow:0 4px 10px rgba(0,0,0,.1);max-width:500px;margin:0 auto;}
+.admin-panel h3,.user-panel h3{margin-top:0;}
 </style>
 </head>
 <body>
@@ -34,9 +34,8 @@ textarea{border:1px solid #ccc;border-radius:4px;padding:6px;width:100%;resize:n
 <header>
   <strong onclick="showPage('home')">MyKala</strong>
   <input id="search" placeholder="جستجو در محصولات...">
-  <span onclick="showPage('cart')">🛒 <span class="badge" id="cartCount">0</span></span>
+  <span onclick="showPage('cartUser')">🛒 <span class="badge" id="cartCount">0</span></span>
   <span onclick="showPage('login')">ورود</span>
-  <span onclick="showPage('adminLogin')">پنل مدیریت</span>
 </header>
 
 <div class="slider">
@@ -50,46 +49,44 @@ textarea{border:1px solid #ccc;border-radius:4px;padding:6px;width:100%;resize:n
   <div class="products" id="productList"></div>
 </div>
 
-<!-- CART -->
-<div id="cart" class="page">
-  <h3>سبد خرید</h3>
-  <div id="cartItems"></div>
-  <h4 id="totalPrice"></h4>
-</div>
-
-<!-- LOGIN USER -->
+<!-- LOGIN SHARED -->
 <div id="login" class="page">
   <h3>ورود / ثبت‌نام</h3>
-  <input placeholder="ایمیل" style="width:100%;padding:8px"><br><br>
-  <input type="password" placeholder="رمز عبور" style="width:100%;padding:8px"><br><br>
-  <button onclick="alert('بخش نمایشی است')">ورود</button>
-</div>
-
-<!-- ADMIN LOGIN -->
-<div id="adminLogin" class="page">
-  <h3>ورود مدیر</h3>
-  <input id="adminUser" placeholder="نام کاربری مدیر"><br><br>
-  <input id="adminPass" type="password" placeholder="رمز عبور مدیر"><br><br>
-  <button onclick="adminLogin()">ورود به پنل</button>
+  <input id="loginUser" placeholder="نام کاربری یا ایمیل"><br>
+  <input id="loginPass" type="password" placeholder="رمز عبور"><br>
+  <button onclick="login()">ورود</button>
 </div>
 
 <!-- ADMIN PANEL -->
 <div id="admin" class="page">
   <div class="admin-panel">
     <h3>پنل مدیریت</h3>
-    
     <h4>افزودن محصول جدید</h4>
     <input id="adminName" placeholder="نام محصول">
     <input id="adminPrice" placeholder="قیمت">
     <input id="adminImg" placeholder="لینک عکس">
     <button onclick="addProduct()">افزودن محصول</button>
-    
     <h4>محصولات موجود</h4>
     <div id="adminProducts"></div>
-    
     <h4>سبد خریدها (سفارش‌ها)</h4>
     <div id="adminCart"></div>
   </div>
+</div>
+
+<!-- USER PANEL -->
+<div id="user" class="page">
+  <div class="user-panel">
+    <h3>پنل کاربری</h3>
+    <h4>محصولات</h4>
+    <div class="products" id="userProductList"></div>
+  </div>
+</div>
+
+<!-- USER CART -->
+<div id="cartUser" class="page">
+  <h3>سبد خرید شما</h3>
+  <div id="cartItemsUser"></div>
+  <h4 id="totalPriceUser"></h4>
 </div>
 
 </div>
@@ -102,6 +99,16 @@ const slides=["https://picsum.photos/1200/300?1","https://picsum.photos/1200/300
 let si=0;
 setInterval(()=>{document.getElementById("slide").src=slides[si];si=(si+1)%slides.length;},3500);
 
+/* USERS */
+const users=[
+  {email:"user1@test.com", password:"1234", name:"کاربر ۱"},
+  {email:"user2@test.com", password:"abcd", name:"کاربر ۲"}
+];
+
+/* ADMIN */
+const adminUserName="admin";
+const adminPassword="1234";
+
 /* PRODUCTS */
 let products=[
  {id:1,name:"گوشی سامسونگ A54",price:12000000,img:"https://picsum.photos/200?1"},
@@ -111,59 +118,67 @@ let products=[
  {id:5,name:"ساعت هوشمند",price:4200000,img:"https://picsum.photos/200?5"}
 ];
 
+/* RENDER PRODUCTS */
 const productList=document.getElementById("productList");
+const userProductList=document.getElementById("userProductList");
 const search=document.getElementById("search");
 
-function renderProducts(list){
- productList.innerHTML="";
+function renderProducts(list,container){
+ container.innerHTML="";
  list.forEach(p=>{
-  productList.innerHTML+=`
+  container.innerHTML+=`
    <div class="card">
     <img src="${p.img}">
     <h4>${p.name}</h4>
     <div class="price">${p.price.toLocaleString()} تومان</div>
-    <button onclick="addToCart(${p.id})">افزودن به سبد</button>
+    <button onclick="addToCartUser(${p.id})">افزودن به سبد</button>
    </div>
   `;
  });
 }
-renderProducts(products);
+renderProducts(products,productList);
+renderProducts(products,userProductList);
 
 /* SEARCH */
 search.addEventListener("input",()=>{
  const v=search.value.trim();
- renderProducts(products.filter(p=>p.name.includes(v)));
+ renderProducts(products.filter(p=>p.name.includes(v)),productList);
+ renderProducts(products.filter(p=>p.name.includes(v)),userProductList);
 });
 
-/* CART */
-function getCart(){return JSON.parse(localStorage.getItem("cart"))||[];}
-function saveCart(c){localStorage.setItem("cart",JSON.stringify(c));updateCartCount();}
-function addToCart(id){const cart=getCart();cart.push(products.find(p=>p.id===id));saveCart(cart);alert("به سبد خرید اضافه شد");}
-function removeFromCart(i){const cart=getCart();cart.splice(i,1);saveCart(cart);loadCart();}
-function loadCart(){const cart=getCart();const div=document.getElementById("cartItems");let total=0;div.innerHTML="";cart.forEach((p,i)=>{total+=p.price;div.innerHTML+=`<div class="cart-item"><span>${p.name}</span><span>${p.price.toLocaleString()} <button onclick="removeFromCart(${i})">❌</button></span></div>`;});document.getElementById("totalPrice").innerText="جمع کل: "+total.toLocaleString()+" تومان";}
-function updateCartCount(){document.getElementById("cartCount").innerText=getCart().length;}
-updateCartCount();
+/* CART USER */
+function getCartUser(){return JSON.parse(localStorage.getItem("cartUser"))||[];}
+function saveCartUser(c){localStorage.setItem("cartUser",JSON.stringify(c));updateCartCountUser();}
+function addToCartUser(id){const cart=getCartUser();cart.push(products.find(p=>p.id===id));saveCartUser(cart);alert("به سبد خرید اضافه شد");}
+function removeFromCartUser(i){const cart=getCartUser();cart.splice(i,1);saveCartUser(cart);loadCartUser();}
+function loadCartUser(){const cart=getCartUser();const div=document.getElementById("cartItemsUser");let total=0;div.innerHTML="";cart.forEach((p,i)=>{total+=p.price;div.innerHTML+=`<div class="cart-item"><span>${p.name}</span><span>${p.price.toLocaleString()} <button onclick="removeFromCartUser(${i})">❌</button></span></div>`;});document.getElementById("totalPriceUser").innerText="جمع کل: "+total.toLocaleString()+" تومان";}
+function updateCartCountUser(){document.getElementById("cartCount").innerText=getCartUser().length;}
+updateCartCountUser();
 
 /* PAGES */
 function showPage(id){
  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
  document.getElementById(id).classList.add("active");
- if(id==="cart") loadCart();
+ if(id==="cartUser") loadCartUser();
  if(id==="admin") renderAdmin();
+ if(id==="user") renderProducts(products,userProductList);
 }
 
-/* ADMIN LOGIN */
-const adminUserName="admin"; // یوزرنیم مدیر
-const adminPassword="1234";   // پسورد مدیر
-
-function adminLogin(){
- const user=document.getElementById("adminUser").value.trim();
- const pass=document.getElementById("adminPass").value.trim();
+/* LOGIN SHARED */
+function login(){
+ const user=document.getElementById("loginUser").value.trim();
+ const pass=document.getElementById("loginPass").value.trim();
  if(user===adminUserName && pass===adminPassword){
-   alert("ورود موفق!");
+   alert("ورود مدیر موفق!");
    showPage("admin");
- }else{
-   alert("نام کاربری یا رمز اشتباه است!");
+ } else {
+   const u=users.find(x=>x.email===user && x.password===pass);
+   if(u){
+     alert("ورود کاربر موفق!");
+     showPage("user");
+   } else {
+     alert("نام کاربری یا رمز عبور اشتباه است!");
+   }
  }
 }
 
@@ -181,7 +196,7 @@ function renderAdmin(){
  });
 
  const adminCart=document.getElementById("adminCart");
- const cart=getCart();
+ const cart=getCartUser();
  adminCart.innerHTML="";
  cart.forEach((c,i)=>{adminCart.innerHTML+=`<div>${c.name} - ${c.price.toLocaleString()} تومان</div>`;});
 }
@@ -192,20 +207,21 @@ function addProduct(){
  const img=document.getElementById("adminImg").value.trim();
  if(!name||!price||!img){alert("همه فیلدها را پر کنید");return;}
  products.push({id:Date.now(),name,price,img});
- renderProducts(products);
+ renderProducts(products,productList);
+ renderProducts(products,userProductList);
  renderAdmin();
  document.getElementById("adminName").value="";
  document.getElementById("adminPrice").value="";
  document.getElementById("adminImg").value="";
 }
 
-function deleteProduct(i){products.splice(i,1);renderProducts(products);renderAdmin();}
+function deleteProduct(i){products.splice(i,1);renderProducts(products,productList);renderProducts(products,userProductList);renderAdmin();}
 function editProduct(i){
  const p=products[i];
  const newName=prompt("نام محصول:",p.name);
  const newPrice=parseInt(prompt("قیمت محصول:",p.price));
  const newImg=prompt("لینک عکس:",p.img);
- if(newName&&newPrice&&newImg){products[i]={id:p.id,name:newName,price:newPrice,img:newImg};renderProducts(products);renderAdmin();}
+ if(newName&&newPrice&&newImg){products[i]={id:p.id,name:newName,price:newPrice,img:newImg};renderProducts(products,productList);renderProducts(products,userProductList);renderAdmin();}
 }
 </script>
 </body>
