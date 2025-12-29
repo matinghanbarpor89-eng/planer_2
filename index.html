@@ -2,7 +2,7 @@
 <html lang="fa">
 <head>
 <meta charset="UTF-8">
-<title>MyKala PRO++ with Admin</title>
+<title>MyKala PRO++ with Admin Login</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 *{box-sizing:border-box}
@@ -36,7 +36,7 @@ textarea{border:1px solid #ccc;border-radius:4px;padding:6px;width:100%;resize:n
   <input id="search" placeholder="جستجو در محصولات...">
   <span onclick="showPage('cart')">🛒 <span class="badge" id="cartCount">0</span></span>
   <span onclick="showPage('login')">ورود</span>
-  <span onclick="showPage('admin')">پنل مدیریت</span>
+  <span onclick="showPage('adminLogin')">پنل مدیریت</span>
 </header>
 
 <div class="slider">
@@ -57,12 +57,20 @@ textarea{border:1px solid #ccc;border-radius:4px;padding:6px;width:100%;resize:n
   <h4 id="totalPrice"></h4>
 </div>
 
-<!-- LOGIN -->
+<!-- LOGIN USER -->
 <div id="login" class="page">
   <h3>ورود / ثبت‌نام</h3>
   <input placeholder="ایمیل" style="width:100%;padding:8px"><br><br>
   <input type="password" placeholder="رمز عبور" style="width:100%;padding:8px"><br><br>
   <button onclick="alert('بخش نمایشی است')">ورود</button>
+</div>
+
+<!-- ADMIN LOGIN -->
+<div id="adminLogin" class="page">
+  <h3>ورود مدیر</h3>
+  <input id="adminUser" placeholder="نام کاربری مدیر"><br><br>
+  <input id="adminPass" type="password" placeholder="رمز عبور مدیر"><br><br>
+  <button onclick="adminLogin()">ورود به پنل</button>
 </div>
 
 <!-- ADMIN PANEL -->
@@ -144,6 +152,21 @@ function showPage(id){
  if(id==="admin") renderAdmin();
 }
 
+/* ADMIN LOGIN */
+const adminUserName="admin"; // یوزرنیم مدیر
+const adminPassword="1234";   // پسورد مدیر
+
+function adminLogin(){
+ const user=document.getElementById("adminUser").value.trim();
+ const pass=document.getElementById("adminPass").value.trim();
+ if(user===adminUserName && pass===adminPassword){
+   alert("ورود موفق!");
+   showPage("admin");
+ }else{
+   alert("نام کاربری یا رمز اشتباه است!");
+ }
+}
+
 /* ADMIN PANEL */
 function renderAdmin(){
  const adminProducts=document.getElementById("adminProducts");
@@ -184,7 +207,6 @@ function editProduct(i){
  const newImg=prompt("لینک عکس:",p.img);
  if(newName&&newPrice&&newImg){products[i]={id:p.id,name:newName,price:newPrice,img:newImg};renderProducts(products);renderAdmin();}
 }
-
 </script>
 </body>
 </html>
